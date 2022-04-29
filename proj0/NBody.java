@@ -46,7 +46,7 @@ public class NBody {
             }
             StdDraw.picture(0, 0, "images/starfield.jpg");
             for (int i = 0; i < n; i++) {
-                StdDraw.picture(ps[i].xxPos, ps[i].yyPos, "images/" + ps[i].imgFileName);
+                ps[i].draw();
             }
             StdDraw.show();
             StdDraw.pause(10);
