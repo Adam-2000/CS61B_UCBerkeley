@@ -66,25 +66,84 @@ public class ArrayDequeTest {
 
         // System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
         ///*
-        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        ArrayDeque<Integer> ad = new ArrayDeque<Integer>();
         // should be empty
-        boolean passed = checkEmpty(true, lld1.isEmpty());
+        boolean passed = checkEmpty(true, ad.isEmpty());
 
-        lld1.addFirst(10);
+        ad.addLast(0);
         // should not be empty
-        passed = checkEmpty(false, lld1.isEmpty()) && passed;
+        passed = checkEmpty(false, ad.isEmpty()) && passed;
 
-        lld1.removeFirst();
+        ad.removeFirst();
         // should be empty
-        passed = checkEmpty(true, lld1.isEmpty()) && passed;
+        passed = checkEmpty(true, ad.isEmpty()) && passed;
+        ad.addFirst(2);
+        ad.removeLast();
+        ad.addFirst(4);
+        ad.addLast(6);
+        ad.removeFirst();
+        ad.removeFirst();
+        ad.addFirst(9);
+        ad.removeLast();
+        ad.addFirst(11);
+        ad.addLast(12);
+        ad.addLast(13);
+        ad.addLast(14);
+        ad.addLast(15);
+        ad.addLast(16);
+        ad.addLast(18);
+        ad.addLast(19);
+        ad.addLast(21);
+        ad.removeLast();
+        ad.removeLast();
 
         printTestStatus(passed);
         //*/
     }
 
+    public static void multiRemoveTest() {
+
+        System.out.println("Running add/remove test.");
+
+        // System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+        ///*
+        ArrayDeque<Integer> ad = new ArrayDeque<Integer>();
+        // should be empty
+        boolean passed = checkEmpty(true, ad.isEmpty());
+
+        ad.addLast(0);
+        // should not be empty
+        passed = checkEmpty(false, ad.isEmpty()) && passed;
+
+        ad.removeFirst();
+        // should be empty
+        passed = checkEmpty(true, ad.isEmpty()) && passed;
+        ad.addFirst(2);
+        ad.removeLast();
+        ad.addFirst(4);
+        ad.addLast(6);
+        ad.removeFirst();
+        ad.removeFirst();
+        ad.addFirst(9);
+        ad.removeLast();
+        ad.addFirst(11);
+        ad.addLast(12);
+        ad.addLast(13);
+        ad.addLast(14);
+        ad.addLast(15);
+        ad.addLast(16);
+        ad.addLast(18);
+        ad.addLast(19);
+        ad.addLast(21);
+        ad.removeLast();
+        ad.removeLast();
+
+        printTestStatus(passed);
+        //*/
+    }
     public static void main(String[] args) {
         System.out.println("Running tests.\n");
-        addIsEmptySizeTest();
+        // addIsEmptySizeTest();
         addRemoveTest();
     }
 }

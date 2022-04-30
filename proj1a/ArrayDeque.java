@@ -21,13 +21,12 @@ public class ArrayDeque<T> {
         }
         int cur = tailIdx;
         int newIdx = 0;
-        while (cur != afterFrontIdx) {
-            newList[newIdx++] = items[cur];
-            items[cur++] = null;
+        do {
+            newList[newIdx++] = items[cur++];
             if (cur == items.length) {
                 cur = 0;
             }
-        }
+        } while (cur != afterFrontIdx);
         tailIdx = 0;
         afterFrontIdx = size;
         items = newList;
@@ -62,7 +61,7 @@ public class ArrayDeque<T> {
         return size;
     }
 
-    public void printDeque(){
+    public void printDeque() {
         if (size == 0) {
             return;
         }
@@ -79,30 +78,30 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
-        if (size-- == 0) {
+        if (size == 0) {
             return null;
         }
-        if (--afterFrontIdx < 0){
+        if (--afterFrontIdx < 0) {
             afterFrontIdx = items.length - 1;
         }
         T ret = items[afterFrontIdx];
-        items[afterFrontIdx] = null;
-        if (size < USAGERATIO * items.length && items.length >= RFACTOR * INITLENGTH){
+        size -= 1;
+        if (size < USAGERATIO * items.length && items.length >= RFACTOR * INITLENGTH) {
             resize(items.length / RFACTOR);
         }
         return ret;
     }
 
     public T removeLast() {
-        if (size-- == 0) {
+        if (size == 0) {
             return null;
         }
-        T ret = items[tailIdx];
-        items[tailIdx++] = null;
-        if (tailIdx == items.length){
+        T ret = items[tailIdx++];
+        if (tailIdx == items.length) {
             tailIdx = 0;
         }
-        if (size < USAGERATIO * items.length && items.length >= RFACTOR * INITLENGTH){
+        size -= 1;
+        if (size < USAGERATIO * items.length && items.length >= RFACTOR * INITLENGTH) {
             resize(items.length / RFACTOR);
         }
         return ret;
