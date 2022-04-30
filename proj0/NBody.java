@@ -1,10 +1,10 @@
 public class NBody {
-    public static double readRadius(String filename){
+    public static double readRadius(String filename) {
         In in = new In(filename);
         in.readInt();
         return in.readDouble();
     }
-    public static Planet[] readPlanets(String filename){
+    public static Planet[] readPlanets(String filename) {
         In in = new In(filename);
         int n = in.readInt();
         in.readDouble();
@@ -16,7 +16,7 @@ public class NBody {
         }
         return ps;
     }
-    public static void main(String[] args){
+    public static void main(String[] args) {
         if (args.length != 3){
             return;
         }
