@@ -22,7 +22,8 @@ public class ArrayDeque<T> implements Deque<T> {
         int cur = tailIdx;
         int newIdx = 0;
         do {
-            newList[newIdx++] = items[cur++];
+            newList[newIdx++] = items[cur];
+            items[cur++] = null;
             if (cur == items.length) {
                 cur = 0;
             }
@@ -92,6 +93,7 @@ public class ArrayDeque<T> implements Deque<T> {
             afterFrontIdx = items.length - 1;
         }
         T ret = items[afterFrontIdx];
+        items[afterFrontIdx] = null;
         size -= 1;
         if (size < USAGERATIO * items.length && items.length >= RFACTOR * INITLENGTH) {
             resize(items.length / RFACTOR);
@@ -104,7 +106,8 @@ public class ArrayDeque<T> implements Deque<T> {
         if (size == 0) {
             return null;
         }
-        T ret = items[tailIdx++];
+        T ret = items[tailIdx];
+        items[tailIdx++] = null;
         if (tailIdx == items.length) {
             tailIdx = 0;
         }
