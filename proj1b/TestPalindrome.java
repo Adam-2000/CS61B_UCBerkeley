@@ -35,5 +35,7 @@ public class TestPalindrome {
         assertFalse(palindrome.isPalindrome("abcdcba", cc1));
         assertTrue(palindrome.isPalindrome("abcdab", cc1));
         assertTrue(palindrome.isPalindrome("abcedab", cc1));
+        assertTrue(palindrome.isPalindrome("&%", cc1));
+        assertFalse(palindrome.isPalindrome("aZ", cc1));
     }
 }
