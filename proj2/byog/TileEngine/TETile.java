@@ -70,6 +70,14 @@ public class TETile {
         this(t.character, textColor, t.backgroundColor, t.description, t.filepath);
     }
 
+    /**
+     * Creates a copy of TETile t.
+     * @param t tile to copy
+     */
+    public TETile(TETile t) {
+        this(t.character, t.textColor, t.backgroundColor, t.description, t.filepath);
+    }
+
 
     /**
      * Draws the tile to the screen at location x, y. If a valid filepath is provided,
