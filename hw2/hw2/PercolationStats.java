@@ -7,6 +7,9 @@ public class PercolationStats {
     private final int T;
     public PercolationStats(int N, int T, PercolationFactory pf) {
         // perform T independent experiments on an N-by-N grid
+        if (N <= 0 || T <= 0) {
+            throw new java.lang.IllegalArgumentException();
+        }
         thresholds = new double[T];
         this.T = T;
         StdRandom.setSeed(SEED);

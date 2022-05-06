@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
 
     private final WeightedQuickUnionUF union;
+    private final WeightedQuickUnionUF unionCopy;
     private final boolean[][] gridIsOpen;
     private int idFullOpen;
     private int numOpenSite;
@@ -23,6 +24,10 @@ public class Percolation {
         numOpenSite = 0;
         this.N = N;
         union = new WeightedQuickUnionUF(N * N);
+        unionCopy = new WeightedQuickUnionUF(N * N);
+        for (int i = N * (N - 1); i < N * N - 1; i++) {
+            unionCopy.union(i, i + 1);
+        }
     }
     private int index2to1(int row, int col) {
         return row * N + col;
@@ -36,15 +41,19 @@ public class Percolation {
         int idx21 = index2to1(row, col);
         if (row - 1 >= 0 && gridIsOpen[row - 1][col]) {
             union.union(idx21, index2to1(row - 1, col));
+            unionCopy.union(idx21, index2to1(row - 1, col));
         }
         if (row + 1 < N && gridIsOpen[row + 1][col]) {
             union.union(idx21, index2to1(row + 1, col));
+            unionCopy.union(idx21, index2to1(row + 1, col));
         }
         if (col - 1 >= 0 && gridIsOpen[row][col - 1]) {
             union.union(idx21, index2to1(row, col - 1));
+            unionCopy.union(idx21, index2to1(row, col - 1));
         }
         if (col + 1 < N && gridIsOpen[row][col + 1]) {
             union.union(idx21, index2to1(row, col + 1));
+            unionCopy.union(idx21, index2to1(row, col + 1));
         }
         int newRoot = union.find(idx21);
         if (idFullOpen == -1) {
@@ -56,6 +65,7 @@ public class Percolation {
                 idFullOpen = newRoot;
             } else if (row == 0) {
                 union.union(idx21, idFullOpen);
+                unionCopy.union(idx21, idFullOpen);
                 idFullOpen = union.find(idFullOpen);
             }
         }
@@ -82,12 +92,19 @@ public class Percolation {
         return numOpenSite;
     }
     public boolean percolates() { // does the system percolate?
-        for (int idx = (N - 1) * N; idx < N * N; idx++) {
-            if (union.find(idx) == idFullOpen) {
-                return true;
-            }
+//        for (int idx = (N - 1) * N; idx < N * N; idx++) {
+//            if (union.find(idx) == idFullOpen) {
+//                return true;
+//            }
+//        }
+//        return false;
+        if (idFullOpen == -1) {
+            return false;
         }
-        return false;
+        return unionCopy.connected(N * N - 1, idFullOpen);
+
     }
-    // public static void main(String[] args)   // use for unit testing (not required)
+    public static void main(String[] args) { // use for unit testing (not required)
+        return;
+    }
 }
