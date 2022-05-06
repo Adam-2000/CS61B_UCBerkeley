@@ -3,7 +3,7 @@ import edu.princeton.cs.introcs.StdRandom;
 import edu.princeton.cs.introcs.StdStats;
 public class PercolationStats {
     private final double[] thresholds;
-    private static final long SEED = 12345;
+    //private static final long SEED = 12345;
     private final int T;
     public PercolationStats(int N, int T, PercolationFactory pf) {
         // perform T independent experiments on an N-by-N grid
@@ -12,7 +12,7 @@ public class PercolationStats {
         }
         thresholds = new double[T];
         this.T = T;
-        StdRandom.setSeed(SEED);
+        //StdRandom.setSeed(SEED);
         Percolation percolation;
         for (int t = 0; t < T; t++) {
             percolation = pf.make(N);
