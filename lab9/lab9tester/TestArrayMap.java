@@ -12,14 +12,14 @@ public class TestArrayMap {
 
     @Test
     public void sanityGenericsTest() {
-        try {
-            ArrayMap<String, String> a = new ArrayMap<>();
-            ArrayMap<String, Integer> b = new ArrayMap<>();
-            ArrayMap<Integer, String> c = new ArrayMap<>();
-            ArrayMap<Boolean, Integer> e = new ArrayMap<>();
-        } catch (Exception e) {
-            fail();
-        }
+//        try {
+        ArrayMap<String, String> a = new ArrayMap<>();
+        ArrayMap<String, Integer> b = new ArrayMap<>();
+        ArrayMap<Integer, String> c = new ArrayMap<>();
+        ArrayMap<Boolean, Integer> e = new ArrayMap<>();
+//        } catch (Exception e) {
+//            fail();
+//        }
     }
 
     //assumes put/size/containsKey/get work
