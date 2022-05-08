@@ -140,6 +140,27 @@ public class TestMyHashMap {
         }
     }
 
+
+    @Test
+    public void resizeTest() {
+        MyHashMap<String, Integer> studentIDs = new MyHashMap<>(4);
+        studentIDs.put("sarah", 1);
+        studentIDs.put("john", 2);
+        studentIDs.put("adam", 3);
+        studentIDs.put("lily", 4);
+        studentIDs.put("valerya", 5);
+        studentIDs.put("pikachu", 6);
+        studentIDs.put("nintendo", 7);
+        studentIDs.put("sony", 8);
+        studentIDs.put("hello", 9);
+        studentIDs.put("jack", 10);
+        studentIDs.put("michael", 11);
+        Iterator<String> iter = studentIDs.iterator();
+        while (iter.hasNext()) {
+            String currString = iter.next();
+            System.out.println(currString + " " + studentIDs.get(currString).toString());
+        }
+    }
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestMyHashMap.class);
     }
