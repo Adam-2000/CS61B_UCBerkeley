@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import lab9.MyHashMap;
 
+import java.util.Iterator;
+
 /**
  * Tests by Brendan Hu, Spring 2015, revised for 2018 by Josh Hug
  */
@@ -12,14 +14,14 @@ public class TestMyHashMap {
 
     @Test
     public void sanityGenericsTest() {
-        try {
-            MyHashMap<String, String> a = new MyHashMap<String, String>();
-            MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
-            MyHashMap<Integer, String> c = new MyHashMap<Integer, String>();
-            MyHashMap<Boolean, Integer> e = new MyHashMap<Boolean, Integer>();
-        } catch (Exception e) {
-            fail();
-        }
+//        try {
+        MyHashMap<String, String> a = new MyHashMap<String, String>();
+        MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
+        MyHashMap<Integer, String> c = new MyHashMap<Integer, String>();
+        MyHashMap<Boolean, Integer> e = new MyHashMap<Boolean, Integer>();
+//        } catch (Exception e) {
+//            fail();
+//        }
     }
 
     //assumes put/size/containsKey/get work
@@ -125,6 +127,17 @@ public class TestMyHashMap {
         studentIDs.put("evil alan", 345);
         assertEquals(345, studentIDs.get("evil alan").intValue());
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
+
+        assertEquals((Integer) 12345, studentIDs.remove("sarah"));
+        assertEquals(null, studentIDs.remove("sarah"));
+        assertEquals(null, studentIDs.remove("alan", 123));
+        assertEquals((Integer) 345, studentIDs.remove("alan", 345));
+
+        Iterator<String> iter = studentIDs.iterator();
+        while (iter.hasNext()) {
+            String currString = iter.next();
+            System.out.println(currString + " " + studentIDs.get(currString).toString());
+        }
     }
 
     public static void main(String[] args) {
