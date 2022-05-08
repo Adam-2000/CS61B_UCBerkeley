@@ -21,6 +21,17 @@ public class TestJankyOomage {
             return val;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (o == null) {
+                return false;
+            }
+            if (o.getClass() != this.getClass()) {
+                return false;
+            }
+            return val == ((JankyOomage) o).val;
+        }
+
         public static JankyOomage randomJankyOomage() {
             JankyOomage x = new JankyOomage();
             x.val = StdRandom.uniform(0, 2);
