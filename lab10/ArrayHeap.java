@@ -137,7 +137,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
         if (minIdx != index) {
             swap(minIdx, index);
-            sink(minIdx);
+            if (inBounds(minIdx)) {
+                sink(minIdx);
+            }
         }
     }
 
