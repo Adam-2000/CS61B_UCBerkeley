@@ -212,9 +212,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         Node currNode;
         int index;
         for (index = 1; index <= size; index++) {
-            if (getNode(index).item() == item) {
+            if (getNode(index).item().equals(item)) {
                 currNode = getNode(index);
                 double oldPr = currNode.priority();
+                currNode.myPriority = priority;
                 if (priority > oldPr) {
                     sink(index);
                 } else if (priority < oldPr) {
@@ -326,12 +327,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
         // Change item x6's priority to a low value.
 
-        pq.contents[6].myPriority = 0;
+        // pq.contents[6].myPriority = 0;
         System.out.println("PQ before swimming:");
         System.out.println(pq);
 
         // Swim x6 upwards. It should reach the root.
-
+        pq.changePriority("x6", 0);
         pq.swim(6);
         System.out.println("PQ after swimming:");
         System.out.println(pq);
@@ -369,6 +370,30 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         assertEquals("x7", pq.contents[7].myItem);
     }
 
+    @Test
+    public void testUpdate() {
+        ArrayHeap<String> pq = new ArrayHeap<>();
+        pq.size = 7;
+        for (int i = 1; i <= 7; i += 1) {
+            pq.contents[i] = new ArrayHeap<String>.Node("x" + i, i);
+        }
+        // Change root's priority to a large value.
+        // pq.contents[1].myPriority = 10;
+        System.out.println("PQ before sinking:");
+        System.out.println(pq);
+
+        // Sink the root.
+        pq.changePriority("x1", 10);
+        System.out.println("PQ after sinking:");
+        System.out.println(pq);
+        assertEquals("x2", pq.contents[1].myItem);
+        assertEquals("x4", pq.contents[2].myItem);
+        assertEquals("x3", pq.contents[3].myItem);
+        assertEquals("x1", pq.contents[4].myItem);
+        assertEquals("x5", pq.contents[5].myItem);
+        assertEquals("x6", pq.contents[6].myItem);
+        assertEquals("x7", pq.contents[7].myItem);
+    }
 
     @Test
     public void testInsert() {
