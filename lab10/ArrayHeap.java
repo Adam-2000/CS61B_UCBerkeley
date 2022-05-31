@@ -137,9 +137,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
         if (minIdx != index) {
             swap(minIdx, index);
-            if (inBounds(minIdx)) {
-                sink(minIdx);
-            }
+            sink(minIdx);
         }
     }
 
@@ -185,8 +183,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             return null;
         }
         T retItem = contents[1].item();
-        contents[1] = contents[size--];
-        sink(1);
+        if (size > 0) {
+            contents[1] = contents[size--];
+            sink(1);
+        }
         return retItem;
     }
 
