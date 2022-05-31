@@ -183,8 +183,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             return null;
         }
         T retItem = contents[1].item();
-        if (size > 0) {
-            contents[1] = contents[size--];
+        if (--size > 0) {
+            contents[1] = contents[size + 1];
             sink(1);
         }
         return retItem;
@@ -450,7 +450,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
 
         int i = 0;
         String[] expected = {"a", "b", "c", "c", "d", "d", "e", "g", "h", "i"};
-        while (pq.size() > 1) {
+        while (pq.size() > 0) {
             assertEquals(expected[i], pq.removeMin());
             i += 1;
         }
