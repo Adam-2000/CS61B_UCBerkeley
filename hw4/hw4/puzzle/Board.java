@@ -100,10 +100,7 @@ public class Board implements WorldState {
     }
     @Override
     public boolean equals(Object y) {
-        if (this.getClass() != y.getClass()) {
-            return false;
-        }
-        if (y == null) {
+        if (y == null || this.getClass() != y.getClass()) {
             return false;
         }
         if (N != ((Board) y).N) {
