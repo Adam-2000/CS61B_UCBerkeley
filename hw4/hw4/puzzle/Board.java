@@ -103,6 +103,9 @@ public class Board implements WorldState {
         if (this.getClass() != y.getClass()) {
             return false;
         }
+        if (y == null) {
+            return false;
+        }
         if (N != ((Board) y).N) {
             return false;
         }
