@@ -11,11 +11,9 @@ public class MazeCycles extends MazeExplorer {
     */
     private Maze maze;
     private int targetFound = -1;
-    private int[] oldEdgeTo;
     public MazeCycles(Maze m) {
         super(m);
         maze = m;
-        oldEdgeTo = new int[m.V()];
     }
 
     private void dfs(int v, int parent) {
@@ -25,7 +23,6 @@ public class MazeCycles extends MazeExplorer {
         for (int w : maze.adj(v)) {
             if (w != parent) {
                 if (!marked[w]) {
-                    oldEdgeTo[w] = v;
                     distTo[w] = distTo[v] + 1;
                     announce();
                     dfs(w, v);
@@ -34,7 +31,6 @@ public class MazeCycles extends MazeExplorer {
                     }
                 } else {
                     targetFound = w;
-                    oldEdgeTo[w] = v;
                     distTo[w] = distTo[v] + 1;
                     announce();
                     return;
@@ -52,7 +48,7 @@ public class MazeCycles extends MazeExplorer {
                     distTo[v] = 0;
                     dfs(v, -1);
                     if (targetFound != -1) {
-                        backTrackCircle();
+                        backTrackCircle(targetFound, -1);
                         return;
                     }
                 }
@@ -61,12 +57,22 @@ public class MazeCycles extends MazeExplorer {
     }
 
     // Helper methods go here
-    private void backTrackCircle() {
-        int curr = edgeTo[targetFound] = oldEdgeTo[targetFound];
-        while (curr != targetFound) {
-            curr = edgeTo[curr] = oldEdgeTo[curr];
-            announce();
+    private boolean backTrackCircle(int v, int parent) {
+        if (v == targetFound && parent != -1) {
+            return true;
         }
+        for (int w : maze.adj(v)) {
+            if (w != parent) {
+                if (marked[w]) {
+                    if (backTrackCircle(w, v)) {
+                        edgeTo[w] = v;
+                        announce();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
 
