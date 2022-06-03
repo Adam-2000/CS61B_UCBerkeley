@@ -74,7 +74,7 @@ public class MergeSort {
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         int N = items.size();
-        if (N == 1) {
+        if (N == 1 || N == 0) {
             return items;
         }
         Queue<Item> q1 = new Queue<>();
