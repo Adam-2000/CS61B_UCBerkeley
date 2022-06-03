@@ -1,4 +1,6 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class MergeSort {
     /**
@@ -34,8 +36,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> ret = new Queue<>();
+        for (Item e : items) {
+            Queue<Item> newQ = new Queue<>();
+            newQ.enqueue(e);
+            ret.enqueue(newQ);
+        }
+        return ret;
     }
 
     /**
@@ -53,14 +60,47 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> ret = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            ret.enqueue(getMin(q1, q2));
+        }
+        while (!ret.isEmpty()) {
+            q2.enqueue(ret.dequeue());
+        }
+        return q2;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
+        int N = items.size();
+        if (N == 1) {
+            return items;
+        }
+        Queue<Item> q1 = new Queue<>();
+        for (int cnt = 0; cnt < N / 2; cnt++) {
+            q1.enqueue(items.dequeue());
+        }
+        items = mergeSortedQueues(mergeSort(q1), mergeSort(items));
         return items;
+    }
+
+    @Test
+    public void main() {
+        Queue<Integer> inQ = new Queue<>();
+        inQ.enqueue(3);
+        inQ.enqueue(1);
+        inQ.enqueue(8);
+        inQ.enqueue(0);
+        inQ.enqueue(4);
+        inQ.enqueue(7);
+        inQ.enqueue(2);
+        inQ.enqueue(6);
+        inQ.enqueue(5);
+        inQ.enqueue(9);
+        Queue<Integer> answerQ = mergeSort(inQ);
+        for (int i = 0; i < 10; i++) {
+            assertEquals((Integer) i, inQ.dequeue());
+        }
     }
 }
