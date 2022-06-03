@@ -1,5 +1,8 @@
 import edu.princeton.cs.algs4.Queue;
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 public class MergeSort {
@@ -64,10 +67,7 @@ public class MergeSort {
         while (!q1.isEmpty() || !q2.isEmpty()) {
             ret.enqueue(getMin(q1, q2));
         }
-        while (!ret.isEmpty()) {
-            q2.enqueue(ret.dequeue());
-        }
-        return q2;
+        return ret;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
@@ -78,11 +78,16 @@ public class MergeSort {
             return items;
         }
         Queue<Item> q1 = new Queue<>();
-        for (int cnt = 0; cnt < N / 2; cnt++) {
-            q1.enqueue(items.dequeue());
+        Queue<Item> q2 = new Queue<>();
+        int cnt = 0;
+        for (Item e : items) {
+            if (cnt++ < N / 2) {
+                q1.enqueue(e);
+            } else {
+                q2.enqueue(e);
+            }
         }
-        items = mergeSortedQueues(mergeSort(q1), mergeSort(items));
-        return items;
+        return mergeSortedQueues(mergeSort(q1), mergeSort(q2));
     }
 
     @Test
@@ -99,8 +104,11 @@ public class MergeSort {
         inQ.enqueue(5);
         inQ.enqueue(9);
         Queue<Integer> answerQ = mergeSort(inQ);
+        Iterator<Integer> iter = answerQ.iterator();
+        Iterator<Integer> iterIn = inQ.iterator();
         for (int i = 0; i < 10; i++) {
-            assertEquals((Integer) i, inQ.dequeue());
+            assertEquals((Integer) i, iter.next());
+            System.out.println(iterIn.next());
         }
     }
 }
