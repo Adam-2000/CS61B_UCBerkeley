@@ -54,7 +54,9 @@ public class RadixSort {
             min = min < curr ? min : curr;
         }
         min--;
-
+        if (max <= min) {
+            return;
+        }
         int countsLength = max - min + 1;
         // gather all the counts for each value
         int[] counts = new int[countsLength];
@@ -112,7 +114,9 @@ public class RadixSort {
             min = min < curr ? min : curr;
         }
         min--;
-
+        if (max <= min) {
+            return;
+        }
         int countsLength = max - min + 1;
         // gather all the counts for each value
         int[] counts = new int[countsLength];
