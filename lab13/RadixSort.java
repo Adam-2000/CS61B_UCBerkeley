@@ -28,10 +28,10 @@ public class RadixSort {
             maxWidth = Math.max(maxWidth, string.length());
         }
         String[] sorted = asciis.clone();
-        for (int i = maxWidth - 1; i >= 0; i--) {
-            sortHelperLSD(sorted, i);
-        }
-//        sortHelperMSD(sorted, 0, asciis.length, 0);
+//        for (int i = maxWidth - 1; i >= 0; i--) {
+//            sortHelperLSD(sorted, i);
+//        }
+        sortHelperMSD(sorted, 0, asciis.length, 0);
         return sorted;
     }
 
@@ -154,10 +154,12 @@ public class RadixSort {
 
     @Test
     public void main() {
-        String[] input = new String[]{"318", "12", "", "91", "56", "7812",
-                                      "0941", "1230", "123", "847", "238"};
+        String[] input = new String[]{",¡_|Çî¯ýâjú:e±´å", ",X\u0089oL¼Ú¯Z+g\u0082"};
+//        String[] input = new String[]{"318", "12", "", "91", "56", "7812",
+//                                      "0941", "1230", "123", "847", "238"};
         String[] expected = input.clone();
         Arrays.sort(expected);
+        expected = new String[]{",X\u0089oL¼Ú¯Z+g\u0082", ",¡_|Çî¯ýâjú:e±´å"};
         assertArrayEquals(expected, sort(input));
     }
 }
