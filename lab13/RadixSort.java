@@ -154,12 +154,12 @@ public class RadixSort {
 
     @Test
     public void main() {
-        String[] input = new String[]{",¡_|Çî¯ýâjú:e±´å", ",X\u0089oL¼Ú¯Z+g\u0082"};
+        String[] input = new String[]{"È#3ò", "p\u007F!\u0090>á\u001Ax"};
 //        String[] input = new String[]{"318", "12", "", "91", "56", "7812",
 //                                      "0941", "1230", "123", "847", "238"};
         String[] expected = input.clone();
         Arrays.sort(expected);
-        expected = new String[]{",X\u0089oL¼Ú¯Z+g\u0082", ",¡_|Çî¯ýâjú:e±´å"};
+        expected = new String[]{"p\u007F!\u0090>á\u001Ax", "È#3ò"};
         assertArrayEquals(expected, sort(input));
     }
 }
