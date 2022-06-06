@@ -18,7 +18,7 @@ public class SeamCarver {
         return picture.width();
     }
     public int height() {
-        return picture().height();
+        return picture.height();
     }
     public double energy(int x, int y) {
         int w = width();
