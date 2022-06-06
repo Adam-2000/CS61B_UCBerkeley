@@ -12,7 +12,15 @@ public class SeamCarver {
         energyMat = new double[picture.width()][picture.height()];
     }
     public Picture picture()  {
-        return new Picture(picture);
+        int w = width();
+        int h = height();
+        Picture newPicture = new Picture(w, h);
+        for (int j = 0; j < h; ++j) {
+            for (int i = 0; i < w; ++i) {
+                newPicture.set(i, j, picture.get(i, j));
+            }
+        }
+        return newPicture;
     }
     public int width() {
         return picture.width();
