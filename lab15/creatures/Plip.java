@@ -20,12 +20,21 @@ public class Plip extends Creature {
     /** blue color. */
     private int b;
 
+    private static final double MOVE_ENERGY = 0.15;
+    private static final double STAY_ENERGY_GAIN = 0.2;
+    private static final double MAX_ENERGY = 2.0;
+    private static final int GREEN_BASE = 63;
+    private static final int GREEN_MAX = 255;
+    private static final int RED = 99;
+    private static final int BLUE = 76;
+    private static final double REPLICATE_THRESHOLD = 1.0;
+    private static final double FEAR_PROBABILITY = 0.5;
     /** creates plip with energy equal to E. */
     public Plip(double e) {
         super("plip");
-        r = 0;
-        g = 0;
-        b = 0;
+        r = RED;
+        g = GREEN_BASE;
+        b = BLUE;
         energy = e;
     }
 
@@ -42,7 +51,7 @@ public class Plip extends Creature {
      *  that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        g = GREEN_BASE + (int) ((GREEN_MAX - GREEN_BASE) * (energy / MAX_ENERGY));
         return color(r, g, b);
     }
 
@@ -55,11 +64,14 @@ public class Plip extends Creature {
      *  private static final variable. This is not required for this lab.
      */
     public void move() {
+        energy -= MOVE_ENERGY;
     }
 
 
     /** Plips gain 0.2 energy when staying due to photosynthesis. */
     public void stay() {
+        energy += STAY_ENERGY_GAIN;
+        energy = Math.min(energy, MAX_ENERGY);
     }
 
     /** Plips and their offspring each get 50% of the energy, with none
@@ -67,7 +79,8 @@ public class Plip extends Creature {
      *  Plip.
      */
     public Plip replicate() {
-        return this;
+        energy *= 0.5;
+        return new Plip(energy);
     }
 
     /** Plips take exactly the following actions based on NEIGHBORS:
@@ -81,6 +94,21 @@ public class Plip extends Creature {
      *  for an example to follow.
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
+        List<Direction> empties = getNeighborsOfType(neighbors, "empty");
+        if (empties.size() == 0) {
+            return new Action(Action.ActionType.STAY);
+        } else if (energy > REPLICATE_THRESHOLD) {
+            Direction repDir = HugLifeUtils.randomEntry(empties);
+            return new Action(Action.ActionType.REPLICATE, repDir);
+        } else {
+            List<Direction> cloruses = getNeighborsOfType(neighbors, "clorus");
+            if (cloruses.size() > 0) {
+                if (HugLifeUtils.random() < FEAR_PROBABILITY) {
+                    Direction moveDir = HugLifeUtils.randomEntry(empties);
+                    return new Action(Action.ActionType.MOVE, moveDir);
+                }
+            }
+        }
         return new Action(Action.ActionType.STAY);
     }
 
