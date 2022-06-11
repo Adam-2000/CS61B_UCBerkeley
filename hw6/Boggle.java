@@ -7,11 +7,6 @@ public class Boggle {
     
     // File path of dictionary file
     static String dictPath = "words.txt";
-    static TrieSet trie = new TrieSet(dictPath);
-    public void setDictPath(String path) {
-        dictPath = path;
-        trie = new TrieSet(path);
-    }
     public static class StringComparator implements Comparator<String> {
         @Override
         public int compare(String o1, String o2) {
@@ -68,6 +63,7 @@ public class Boggle {
      */
     public static List<String> solve(int k, String boardFilePath) {
         // YOUR CODE HERE
+        TrieSet trie = new TrieSet(dictPath);
         LinkedList<String> list = new LinkedList<>();
         In in = new In(boardFilePath);
         String[] lines = in.readAllLines();

@@ -17,6 +17,7 @@ public class TestBoggle {
     }
     @Test
     public void test1() {
+        Boggle.dictPath = "words.txt";
         List<String> res1 = Boggle.solve(7, "exampleBoard.txt");
         String[] expected1 = new String[]{"thumbtacks", "thumbtack",
                                           "setbacks", "setback", "ascent", "humane", "smacks"};
@@ -29,6 +30,7 @@ public class TestBoggle {
     }
     @Test
     public void test2() {
+        Boggle.dictPath = "trivial_words.txt";
         List<String> res2 = Boggle.solve(20, "exampleBoard2.txt");
         String[] expected2 = new String[] {"aaaaa", "aaaa"};
         int i = 0;
@@ -40,6 +42,8 @@ public class TestBoggle {
     }
     @Test
     public void main() {
-
+        testComparator();
+        test1();
+        test2();
     }
 }
