@@ -9,7 +9,7 @@ import huglife.Occupant;
 import huglife.Impassible;
 
 /** Tests the plip class   
- *  @authr FIXME
+ *  @author FIXME
  */
 
 public class TestPlip {

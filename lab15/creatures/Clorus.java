@@ -38,7 +38,7 @@ public class Clorus extends Creature {
     }
 
     @Override
-    public Creature replicate() {
+    public Clorus replicate() {
         energy *= 0.5;
         return new Clorus(energy);
     }
