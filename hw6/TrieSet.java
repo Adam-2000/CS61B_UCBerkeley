@@ -1,6 +1,8 @@
-import edu.princeton.cs.algs4.Stack;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
 public class TrieSet {
     public class Node {
         private boolean exists;
@@ -23,6 +25,9 @@ public class TrieSet {
         }
         public boolean exists() {
             return exists;
+        }
+        public char getCharactor() {
+            return charactor;
         }
     }
 
