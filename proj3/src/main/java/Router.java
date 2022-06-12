@@ -27,18 +27,19 @@ public class Router {
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
 //        Set<Long> masks = new HashSet<>();
-        GraphDB.Node[] nodeList = new GraphDB.Node[g.numVertices()];
+//        GraphDB.Node[] nodeList = new GraphDB.Node[g.numVertices()];
         long stId = -1;
         long destId = -1;
         double stDist = Double.MAX_VALUE;
         double destDist = Double.MAX_VALUE;
-        int i = 0;
+//        int i = 0;
         for (long id : g.vertices()) {
             GraphDB.Node node = g.getNode(id);
             node.resetNode();
-            nodeList[i++] = node;
-            double newStDist = g.distance(stlon, stlat, node.longitude(), node.latitude());
-            double newDestDist = g.distance(destlon, destlat, node.longitude(), node.latitude());
+//            nodeList[i++] = node;
+            double newStDist = GraphDB.distance(stlon, stlat, node.longitude(), node.latitude());
+            double newDestDist = GraphDB.distance(destlon, destlat,
+                                                  node.longitude(), node.latitude());
             if (newStDist < stDist) {
                 stDist = newStDist;
                 stId = id;
@@ -58,7 +59,11 @@ public class Router {
         curNode.setPriority(g.distance(curId, destId));
         heap.insert(curNode);
 
+        LinkedList<Long> result = new LinkedList<>();
         while (true) {
+            if (heap.isEmpty()) {
+                return result;
+            }
             curNode = heap.delMin();
             curId = curNode.id();
             curNode.setMask(true);
@@ -84,7 +89,7 @@ public class Router {
                 }
             }
         }
-        LinkedList<Long> result = new LinkedList<>();
+
         while (curId != stId) {
             result.addFirst(curId);
             curId = g.getNode(curId).parentId();
