@@ -24,22 +24,61 @@ public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
     public static class Node implements Comparable<Node>, MinPQ.HeapHandler {
-        public final long id;
-        public final double longitude;
-        public final double latitude;
-        public final TreeSet<Long> neighborIds;
-        public String name;
+        private final long id;
+        public long id() {
+            return id;
+        }
+        private final double longitude;
+        public double longitude() {
+            return longitude;
+        }
+        private final double latitude;
+        public double latitude() {
+            return latitude;
+        }
+        private final TreeSet<Long> neighborIds;
+        public TreeSet<Long> neighborIds() {
+            return neighborIds;
+        }
+        private String name;
         Node(long id, double lon, double lat) {
             this.id = id;
             latitude = lat;
             longitude = lon;
             neighborIds = new TreeSet<>();
         }
-        public double dist = -1;
-        public double priority = -1;
-        public int heapId = -1;
-        public long parentId = -1;
-        public boolean mask = false;
+        private double dist = -1;
+        public double dist() {
+            return dist;
+        }
+        public void setDist(double dist) {
+            this.dist = dist;
+        }
+        private double priority = -1;
+        public double priority() {
+            return priority;
+        }
+        public void setPriority(double priority) {
+            this.priority = priority;
+        }
+        private int heapId = -1;
+        public int heapId() {
+            return heapId;
+        }
+        private long parentId = -1;
+        public long parentId() {
+            return parentId;
+        }
+        public void setParentId(long parentId) {
+            this.parentId = parentId;
+        }
+        private boolean mask = false;
+        public boolean mask() {
+            return mask;
+        }
+        public void setMask(boolean mask) {
+            this.mask = mask;
+        }
         public void resetNode() {
             dist = Double.MAX_VALUE;
             priority = Double.MAX_VALUE;

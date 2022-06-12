@@ -105,6 +105,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             if (k.equals("maxspeed")) {
                 //System.out.println("Max Speed: " + v);
                 /* TODO set the max speed of the "current way" here. */
+                int a = 1;
             } else if (k.equals("highway")) {
                 //System.out.println("Highway type: " + v);
                 /* TODO Figure out whether this way and its connections are valid. */
@@ -114,6 +115,7 @@ public class GraphBuildingHandler extends DefaultHandler {
                 }
             } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
+                int a = 1;
             }
 //            System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")

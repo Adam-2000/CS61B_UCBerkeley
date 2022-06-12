@@ -37,8 +37,8 @@ public class Router {
             GraphDB.Node node = g.getNode(id);
             node.resetNode();
             nodeList[i++] = node;
-            double newStDist = g.distance(stlon, stlat, node.longitude, node.latitude);
-            double newDestDist = g.distance(destlon, destlat, node.longitude, node.latitude);
+            double newStDist = g.distance(stlon, stlat, node.longitude(), node.latitude());
+            double newDestDist = g.distance(destlon, destlat, node.longitude(), node.latitude());
             if (newStDist < stDist) {
                 stDist = newStDist;
                 stId = id;
@@ -48,33 +48,38 @@ public class Router {
                 destId = id;
             }
         }
-        MinPQ<GraphDB.Node> heap = new MinPQ<>(nodeList);
+//        MinPQ<GraphDB.Node> heap = new MinPQ<>(nodeList);
+        MinPQ<GraphDB.Node> heap = new MinPQ<>();
         heap.setHasHandle(true);
 
         GraphDB.Node curNode = g.getNode(stId);
         long curId = stId;
-        curNode.dist = 0;
-        curNode.priority = g.distance(curId, destId);
-        heap.decreaseKey(curNode.heapId);
+        curNode.setDist(0);
+        curNode.setPriority(g.distance(curId, destId));
+        heap.insert(curNode);
 
         while (true) {
             curNode = heap.delMin();
-            curId = curNode.id;
-            curNode.mask = true;
+            curId = curNode.id();
+            curNode.setMask(true);
             if (curId == destId) {
                 break;
             }
-            for (long id : curNode.neighborIds) {
+            for (long id : curNode.neighborIds()) {
                 GraphDB.Node node = g.getNode(id);
-                if (!node.mask) {
+                if (!node.mask()) {
                     double parentDist = g.distance(curId, id);
                     double hDist = g.distance(id, destId);
-                    double newPriority = curNode.dist + parentDist + hDist;
-                    if (newPriority < node.priority) {
-                        node.dist = curNode.dist + parentDist;
-                        node.priority = newPriority;
-                        node.parentId = curId;
-                        heap.decreaseKey(node.heapId);
+                    double newPriority = curNode.dist() + parentDist + hDist;
+                    if (newPriority < node.priority()) {
+                        node.setDist(curNode.dist() + parentDist);
+                        node.setPriority(newPriority);
+                        node.setParentId(curId);
+                        if (node.heapId() == -1) {
+                            heap.insert(node);
+                        } else {
+                            heap.decreaseKey(node.heapId());
+                        }
                     }
                 }
             }
@@ -82,7 +87,7 @@ public class Router {
         LinkedList<Long> result = new LinkedList<>();
         while (curId != stId) {
             result.addFirst(curId);
-            curId = g.getNode(curId).parentId;
+            curId = g.getNode(curId).parentId();
         }
         result.addFirst(stId);
         return result;
