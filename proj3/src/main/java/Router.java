@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -25,7 +26,66 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+//        Set<Long> masks = new HashSet<>();
+        GraphDB.Node[] nodeList = new GraphDB.Node[g.numVertices()];
+        long stId = -1;
+        long destId = -1;
+        double stDist = Double.MAX_VALUE;
+        double destDist = Double.MAX_VALUE;
+        int i = 0;
+        for (long id : g.vertices()) {
+            GraphDB.Node node = g.getNode(id);
+            node.resetNode();
+            nodeList[i++] = node;
+            double newStDist = g.distance(stlon, stlat, node.longitude, node.latitude);
+            double newDestDist = g.distance(destlon, destlat, node.longitude, node.latitude);
+            if (newStDist < stDist) {
+                stDist = newStDist;
+                stId = id;
+            }
+            if (newDestDist < destDist) {
+                destDist = newDestDist;
+                destId = id;
+            }
+        }
+        MinPQ<GraphDB.Node> heap = new MinPQ<>(nodeList);
+        heap.setHasHandle(true);
+
+        GraphDB.Node curNode = g.getNode(stId);
+        long curId = stId;
+        curNode.dist = 0;
+        curNode.priority = g.distance(curId, destId);
+        heap.decreaseKey(curNode.heapId);
+
+        while (true) {
+            curNode = heap.delMin();
+            curId = curNode.id;
+            curNode.mask = true;
+            if (curId == destId) {
+                break;
+            }
+            for (long id : curNode.neighborIds) {
+                GraphDB.Node node = g.getNode(id);
+                if (!node.mask) {
+                    double parentDist = g.distance(curId, id);
+                    double hDist = g.distance(id, destId);
+                    double newPriority = curNode.dist + parentDist + hDist;
+                    if (newPriority < node.priority) {
+                        node.dist = curNode.dist + parentDist;
+                        node.priority = newPriority;
+                        node.parentId = curId;
+                        heap.decreaseKey(node.heapId);
+                    }
+                }
+            }
+        }
+        LinkedList<Long> result = new LinkedList<>();
+        while (curId != stId) {
+            result.addFirst(curId);
+            curId = g.getNode(curId).parentId;
+        }
+        result.addFirst(stId);
+        return result;
     }
 
     /**

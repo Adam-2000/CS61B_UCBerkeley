@@ -3,10 +3,13 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
+
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -20,7 +23,49 @@ import java.util.ArrayList;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
+    public static class Node implements Comparable<Node>, MinPQ.HeapHandler {
+        public final long id;
+        public final double longitude;
+        public final double latitude;
+        public final TreeSet<Long> neighborIds;
+        public String name;
+        Node(long id, double lon, double lat) {
+            this.id = id;
+            latitude = lat;
+            longitude = lon;
+            neighborIds = new TreeSet<>();
+        }
+        public double dist = -1;
+        public double priority = -1;
+        public int heapId = -1;
+        public long parentId = -1;
+        public boolean mask = false;
+        public void resetNode() {
+            dist = Double.MAX_VALUE;
+            priority = Double.MAX_VALUE;
+            heapId = -1;
+            parentId = -1;
+            mask = false;
+        }
+        @Override
+        public int compareTo(Node o) {
+            if (priority < o.priority) {
+                return -1;
+            } else if (priority == o.priority) {
+                return 0;
+            }
+            return 1;
+        }
 
+        @Override
+        public void changeHeapId(int i) {
+            heapId = i;
+        }
+    }
+    private Map<Long, Node> nodeMap;
+    public Node getNode(long id) {
+        return nodeMap.get(id);
+    }
     /**
      * Example constructor shows how to create and start an XML parser.
      * You do not need to modify this constructor, but you're welcome to do so.
@@ -31,7 +76,7 @@ public class GraphDB {
             File inputFile = new File(dbPath);
             FileInputStream inputStream = new FileInputStream(inputFile);
             // GZIPInputStream stream = new GZIPInputStream(inputStream);
-
+            nodeMap = new HashMap<>();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             GraphBuildingHandler gbh = new GraphBuildingHandler(this);
@@ -42,6 +87,30 @@ public class GraphDB {
         clean();
     }
 
+    public void putNode(long id, double lon, double lat) {
+        if (!nodeMap.containsKey(id)) {
+            nodeMap.put(id, new Node(id, lon, lat));
+        } else {
+            throw new IllegalArgumentException("ID not found: " + id);
+        }
+    }
+
+    public void setNodeName(long id, String name) {
+        if (nodeMap.containsKey(id)) {
+            nodeMap.get(id).name = name;
+        } else {
+            throw new IllegalArgumentException("ID not found: " + id + " " + name);
+        }
+    }
+
+    public void connect(long id1, long id2) {
+        if (nodeMap.containsKey(id1) && nodeMap.containsKey(id2)) {
+            nodeMap.get(id1).neighborIds.add(id2);
+            nodeMap.get(id2).neighborIds.add(id1);
+        } else {
+            throw new IllegalArgumentException("ID not found: " + id1 + " " + id2);
+        }
+    }
     /**
      * Helper to process strings into their "cleaned" form, ignoring punctuation and capitalization.
      * @param s Input string.
@@ -57,7 +126,16 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        // TOD: Your code here.
+        TreeSet<Long> removeList = new TreeSet<>();
+        for (long id : nodeMap.keySet()) {
+            if (nodeMap.get(id).neighborIds.isEmpty()) {
+                removeList.add(id);
+            }
+        }
+        for (long id : removeList) {
+            nodeMap.remove(id);
+        }
     }
 
     /**
@@ -66,16 +144,18 @@ public class GraphDB {
      */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return nodeMap.keySet();
     }
-
+    int numVertices() {
+        return nodeMap.size();
+    }
     /**
      * Returns ids of all vertices adjacent to v.
      * @param v The id of the vertex we are looking adjacent to.
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        return nodeMap.get(v).neighborIds;
     }
 
     /**
@@ -136,7 +216,16 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        double minDist = Double.MAX_VALUE;
+        long minId = -1;
+        for (long id : nodeMap.keySet()) {
+            double dist = distance(lon, lat, nodeMap.get(id).longitude, nodeMap.get(id).latitude);
+            if (dist < minDist) {
+                minDist = dist;
+                minId = id;
+            }
+        }
+        return minId;
     }
 
     /**
@@ -145,7 +234,7 @@ public class GraphDB {
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        return nodeMap.get(v).longitude;
     }
 
     /**
@@ -154,6 +243,6 @@ public class GraphDB {
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        return nodeMap.get(v).latitude;
     }
 }
