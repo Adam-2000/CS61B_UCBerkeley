@@ -63,6 +63,9 @@ public class Boggle {
      */
     public static List<String> solve(int k, String boardFilePath) {
         // YOUR CODE HERE
+        if (k <= 0) {
+            throw new IllegalArgumentException();
+        }
         TrieSet trie = new TrieSet(dictPath);
         LinkedList<String> list = new LinkedList<>();
         In in = new In(boardFilePath);
@@ -72,6 +75,9 @@ public class Boggle {
         char[][] board = new char[M][N];
         boolean[][] mask = new boolean[M][N];
         for (int i = 0; i < M; i++) {
+            if (lines[i].length() != N) {
+                throw new IllegalArgumentException();
+            }
             for (int j = 0; j < N; j++) {
                 board[i][j] = lines[i].charAt(j);
                 mask[i][j] = false;
