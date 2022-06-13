@@ -29,7 +29,7 @@ public class GraphDB {
         final double longitude;
         final double latitude;
         final TreeMap<Long, String> neighborIds;
-        private String name;
+        String name;
         Node(long id, double lon, double lat) {
             this.id = id;
             latitude = lat;
@@ -64,6 +64,7 @@ public class GraphDB {
         }
     }
     private Map<Long, Node> nodeMap;
+    TrieMap trie;
     public Node getNode(long id) {
         return nodeMap.get(id);
     }
@@ -78,6 +79,7 @@ public class GraphDB {
             FileInputStream inputStream = new FileInputStream(inputFile);
             // GZIPInputStream stream = new GZIPInputStream(inputStream);
             nodeMap = new HashMap<>();
+            trie = new TrieMap();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             GraphBuildingHandler gbh = new GraphBuildingHandler(this);
@@ -98,7 +100,9 @@ public class GraphDB {
 
     public void setNodeName(long id, String name) {
         if (nodeMap.containsKey(id)) {
-            nodeMap.get(id).name = name;
+            Node node = nodeMap.get(id);
+            node.name = name;
+            trie.put(name, node);
         } else {
             throw new IllegalArgumentException("ID not found: " + id + " " + name);
         }
