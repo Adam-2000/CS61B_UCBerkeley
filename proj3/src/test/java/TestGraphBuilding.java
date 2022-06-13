@@ -139,7 +139,7 @@ public class TestGraphBuilding {
 
     @Test
     public void testFindLocation() {
-        String loc1 = "church of the living god";
+        String loc1 = "Top Dog";
         List<Map<String, Object>> res1 = graph.getLocations(loc1);
         for (Map<String, Object> map : res1) {
             System.out.println(map.get("name"));
