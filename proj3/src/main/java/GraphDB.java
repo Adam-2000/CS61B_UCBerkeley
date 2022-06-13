@@ -297,18 +297,53 @@ public class GraphDB {
     }
 
     public List<Map<String, Object>> getLocations(String locationName) {
-        TrieMap.Node tNode = null;
+        TrieMap.Node tNode;
+        LinkedList<TrieMap.Node> tNodeQueue1 =  new LinkedList<>();
+        LinkedList<TrieMap.Node> tNodeQueue2 =  new LinkedList<>();
+        tNodeQueue1.addLast(trie.getRoot());
+        for (int i = 0; i < locationName.length(); i++) {
+            char currChar = locationName.charAt(i);
+            if (!Character.isAlphabetic(currChar) && currChar != ' ') {
+                continue;
+            }
+            while (!tNodeQueue1.isEmpty()) {
+                tNode = tNodeQueue1.removeFirst();
+                for (char c : tNode.links.keySet()) {
+                    if (Character.isAlphabetic(c)) {
+                        if (Character.isAlphabetic(currChar)
+                                && Character.toLowerCase(c) == Character.toLowerCase(currChar)) {
+                            tNodeQueue2.addLast(tNode.links.get(c));
+                        }
+                    } else if (c == ' ') {
+                        if (currChar == ' ') {
+                            tNodeQueue2.addLast(tNode.links.get(c));
+                        }
+                    } else {
+                        tNodeQueue1.addFirst(tNode.links.get(c));
+                    }
+                }
+            }
+            LinkedList<TrieMap.Node> temp = tNodeQueue1;
+            tNodeQueue1 = tNodeQueue2;
+            tNodeQueue2 = temp;
+        }
+
         LinkedList<Map<String, Object>> result = new LinkedList<>();
-        if (null != (tNode = trie.findStringNode(locationName))) {
-            for (GraphDB.Node node : tNode.gNodes) {
-                Map<String, Object> map = new TreeMap<>();
-                map.put("lat", node.latitude);
-                map.put("lon", node.longitude);
-                map.put("name", node.name);
-                map.put("id", node.id);
-                result.addLast(map);
+
+        while (!tNodeQueue1.isEmpty()) {
+            TrieMap.Node tnode = tNodeQueue1.removeFirst();
+            if (tnode.exists()) {
+                for (GraphDB.Node node : tnode.gNodes) {
+                    Map<String, Object> map = new TreeMap<>();
+                    map.put("lat", node.latitude);
+                    map.put("lon", node.longitude);
+                    map.put("name", node.name);
+                    map.put("id", node.id);
+                    result.addLast(map);
+                }
             }
         }
+
         return result;
     }
 }
