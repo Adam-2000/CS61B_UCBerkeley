@@ -34,9 +34,17 @@ public class TestDirections {
             List<Router.NavigationDirection> actual = Router.routeDirections(graph, path);
             List<Router.NavigationDirection> expected = expectedResults.get(i);
             assertEquals("The directions lengths are not equal", expected.size(), actual.size());
+//            for (int j = 0; j < actual.size(); j++) {
+//                Router.NavigationDirection actualDir = actual.get(j);
+//                Router.NavigationDirection expectedDir = expected.get(j);
+//                System.out.println(actualDir);
+//                System.out.println(expectedDir);
+//                System.out.println();
+//            }
             for (int j = 0; j < actual.size(); j++) {
                 Router.NavigationDirection actualDir = actual.get(j);
                 Router.NavigationDirection expectedDir = expected.get(j);
+//                System.out.println(actualDir);
                 assertEquals("Directions did not match", expectedDir.toString(),
                         actualDir.toString());
             }

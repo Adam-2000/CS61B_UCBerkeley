@@ -42,6 +42,7 @@ public class GraphBuildingHandler extends DefaultHandler {
     private final GraphDB g;
     private ArrayList<Long> wayNodes = new ArrayList<>();
     private boolean isHighway;
+    private String wayName;
     /**
      * Create a new GraphBuildingHandler.
      * @param g The graph to populate with the XML data.
@@ -86,6 +87,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             activeState = "way";
             wayNodes.clear();
             isHighway = false;
+            wayName = "";
 //            System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
@@ -115,7 +117,7 @@ public class GraphBuildingHandler extends DefaultHandler {
                 }
             } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
-                int a = 1;
+                wayName = v;
             }
 //            System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
@@ -150,7 +152,7 @@ public class GraphBuildingHandler extends DefaultHandler {
 //            System.out.println("Finishing a way...");
             if (isHighway) {
                 for (int i = 0; i < wayNodes.size() - 1; i++) {
-                    g.connect(wayNodes.get(i), wayNodes.get(i + 1));
+                    g.connect(wayNodes.get(i), wayNodes.get(i + 1), wayName);
                 }
             }
         }

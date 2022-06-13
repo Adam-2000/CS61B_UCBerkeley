@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -24,61 +25,22 @@ public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
     public static class Node implements Comparable<Node>, MinPQ.HeapHandler {
-        private final long id;
-        public long id() {
-            return id;
-        }
-        private final double longitude;
-        public double longitude() {
-            return longitude;
-        }
-        private final double latitude;
-        public double latitude() {
-            return latitude;
-        }
-        private final TreeSet<Long> neighborIds;
-        public TreeSet<Long> neighborIds() {
-            return neighborIds;
-        }
+        final long id;
+        final double longitude;
+        final double latitude;
+        final TreeMap<Long, String> neighborIds;
         private String name;
         Node(long id, double lon, double lat) {
             this.id = id;
             latitude = lat;
             longitude = lon;
-            neighborIds = new TreeSet<>();
+            neighborIds = new TreeMap<>();
         }
-        private double dist = -1;
-        public double dist() {
-            return dist;
-        }
-        public void setDist(double dist) {
-            this.dist = dist;
-        }
-        private double priority = -1;
-        public double priority() {
-            return priority;
-        }
-        public void setPriority(double priority) {
-            this.priority = priority;
-        }
-        private int heapId = -1;
-        public int heapId() {
-            return heapId;
-        }
-        private long parentId = -1;
-        public long parentId() {
-            return parentId;
-        }
-        public void setParentId(long parentId) {
-            this.parentId = parentId;
-        }
-        private boolean mask = false;
-        public boolean mask() {
-            return mask;
-        }
-        public void setMask(boolean mask) {
-            this.mask = mask;
-        }
+        double dist = -1;
+        double priority = -1;
+        int heapId = -1;
+        long parentId = -1;
+        boolean mask = false;
         public void resetNode() {
             dist = Double.MAX_VALUE;
             priority = Double.MAX_VALUE;
@@ -142,10 +104,10 @@ public class GraphDB {
         }
     }
 
-    public void connect(long id1, long id2) {
+    public void connect(long id1, long id2, String wayName) {
         if (nodeMap.containsKey(id1) && nodeMap.containsKey(id2)) {
-            nodeMap.get(id1).neighborIds.add(id2);
-            nodeMap.get(id2).neighborIds.add(id1);
+            nodeMap.get(id1).neighborIds.put(id2, wayName);
+            nodeMap.get(id2).neighborIds.put(id1, wayName);
         } else {
             throw new IllegalArgumentException("ID not found: " + id1 + " " + id2);
         }
@@ -194,7 +156,7 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return nodeMap.get(v).neighborIds;
+        return nodeMap.get(v).neighborIds.keySet();
     }
 
     /**

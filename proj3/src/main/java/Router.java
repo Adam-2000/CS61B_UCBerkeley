@@ -1,6 +1,4 @@
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,9 +35,9 @@ public class Router {
             GraphDB.Node node = g.getNode(id);
             node.resetNode();
 //            nodeList[i++] = node;
-            double newStDist = GraphDB.distance(stlon, stlat, node.longitude(), node.latitude());
+            double newStDist = GraphDB.distance(stlon, stlat, node.longitude, node.latitude);
             double newDestDist = GraphDB.distance(destlon, destlat,
-                                                  node.longitude(), node.latitude());
+                                                  node.longitude, node.latitude);
             if (newStDist < stDist) {
                 stDist = newStDist;
                 stId = id;
@@ -55,8 +53,8 @@ public class Router {
 
         GraphDB.Node curNode = g.getNode(stId);
         long curId = stId;
-        curNode.setDist(0);
-        curNode.setPriority(g.distance(curId, destId));
+        curNode.dist = 0;
+        curNode. priority = g.distance(curId, destId);
         heap.insert(curNode);
 
         LinkedList<Long> result = new LinkedList<>();
@@ -65,25 +63,25 @@ public class Router {
                 return result;
             }
             curNode = heap.delMin();
-            curId = curNode.id();
-            curNode.setMask(true);
+            curId = curNode.id;
+            curNode.mask = true;
             if (curId == destId) {
                 break;
             }
-            for (long id : curNode.neighborIds()) {
+            for (long id : curNode.neighborIds.keySet()) {
                 GraphDB.Node node = g.getNode(id);
-                if (!node.mask()) {
+                if (!node.mask) {
                     double parentDist = g.distance(curId, id);
                     double hDist = g.distance(id, destId);
-                    double newPriority = curNode.dist() + parentDist + hDist;
-                    if (newPriority < node.priority()) {
-                        node.setDist(curNode.dist() + parentDist);
-                        node.setPriority(newPriority);
-                        node.setParentId(curId);
-                        if (node.heapId() == -1) {
+                    double newPriority = curNode.dist + parentDist + hDist;
+                    if (newPriority < node.priority) {
+                        node.dist = curNode.dist + parentDist;
+                        node.priority = newPriority;
+                        node.parentId = curId;
+                        if (node.heapId == -1) {
                             heap.insert(node);
                         } else {
-                            heap.decreaseKey(node.heapId());
+                            heap.decreaseKey(node.heapId);
                         }
                     }
                 }
@@ -92,7 +90,7 @@ public class Router {
 
         while (curId != stId) {
             result.addFirst(curId);
-            curId = g.getNode(curId).parentId();
+            curId = g.getNode(curId).parentId;
         }
         result.addFirst(stId);
         return result;
@@ -107,10 +105,70 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        List<NavigationDirection> result = new ArrayList<>();
+        if (route.size() <= 1) {
+            return result;
+        }
+        long node0 = route.get(0);
+        double[] distPtr = new double[1];
+        int nextIdx = findNextJunctionNodeIdx(g, route, 0, distPtr);
+        long node1 = route.get(nextIdx);
+//        double prevAngle = g.bearing(node0, node1);
+        result.add(new NavigationDirection(NavigationDirection.START,
+                                           getWayName(g, route, 0), distPtr[0]));
+        int curIdx = nextIdx;
+        while (-1 != (nextIdx = findNextJunctionNodeIdx(g, route, curIdx, distPtr))) {
+            node0 = node1;
+            node1 = route.get(nextIdx);
+            long node_ = route.get(curIdx + 1);
+            double dAngle = g.bearing(node0, node_) - g.bearing(route.get(curIdx - 1), node0);
+            dAngle = clampedAngle(dAngle);
+            result.add(new NavigationDirection(NavigationDirection.chooseDirection(dAngle),
+                                               getWayName(g, route, curIdx), distPtr[0]));
+            result.get(result.size() - 1).angle = dAngle;
+//            prevAngle = newAngle;
+            curIdx = nextIdx;
+        }
+        return result;
+    }
+    private static int findNextJunctionNodeIdx(GraphDB g, List<Long> route, int curIdx, double[] distPtr) {
+        if (curIdx == route.size() - 1) {
+            return -1;
+        }
+        long curId = route.get(curIdx);
+        long nextId = route.get(++curIdx);
+        String curWay = g.getNode(curId).neighborIds.get(nextId);
+        distPtr[0] = g.distance(curId, nextId);
+        curId = nextId;
+        for (; curIdx < route.size() - 1; curIdx++) {
+            nextId = route.get(curIdx + 1);
+            String newWay = g.getNode(curId).neighborIds.get(nextId);
+            if (!newWay.equals(curWay)) {
+                break;
+            }
+            distPtr[0] += g.distance(curId, nextId);
+            curId = nextId;
+        }
+        return curIdx;
     }
 
+    private static double clampedAngle(double dAngle) {
+        while (dAngle >= 180) {
+            dAngle -= 360;
+        }
+        while (dAngle < -180) {
+            dAngle += 360;
+        }
+        return dAngle;
+    }
 
+    private static String getWayName(GraphDB g, List<Long> route, int idx) {
+        String wayName = g.getNode(route.get(idx)).neighborIds.get(route.get(idx + 1));
+//        if (wayName.length() == 0) {
+//            wayName = "unknown road";
+//        }
+        return wayName;
+    }
     /**
      * Class to represent a navigation direction, which consists of 3 attributes:
      * a direction to go, a way, and the distance to travel for.
@@ -155,6 +213,7 @@ public class Router {
         /** The distance along this way I represent. */
         double distance;
 
+        double angle = 0;
         /**
          * Create a default, anonymous NavigationDirection.
          */
@@ -164,11 +223,40 @@ public class Router {
             this.distance = 0.0;
         }
 
-        public String toString() {
-            return String.format("%s on %s and continue for %.3f miles.",
-                    DIRECTIONS[direction], way, distance);
+        public NavigationDirection(int direction, String way, double distance) {
+            this.direction = direction;
+            this.way = way;
+            this.distance = distance;
         }
 
+        public String toString() {
+//            return String.format("%s on %s and continue for %.3f miles.  angle = %.3f",
+//                    DIRECTIONS[direction], way, distance, angle);
+            return String.format("%s on %s and continue for %.3f miles",
+                    DIRECTIONS[direction], way, distance);
+        }
+        private static int chooseDirection(double bearingAngle) {
+            bearingAngle = clampedAngle(bearingAngle);
+            if (bearingAngle < 15 && bearingAngle >= -15) {
+                return STRAIGHT;
+            } else if (bearingAngle >= 0) {
+                if (bearingAngle < 30) {
+                    return SLIGHT_RIGHT;
+                } else if (bearingAngle < 100) {
+                    return RIGHT;
+                } else {
+                    return SHARP_RIGHT;
+                }
+            } else {
+                if (bearingAngle >= -30) {
+                    return SLIGHT_LEFT;
+                } else if (bearingAngle >= -100) {
+                    return LEFT;
+                } else {
+                    return SHARP_LEFT;
+                }
+            }
+        }
         /**
          * Takes the string representation of a navigation direction and converts it into
          * a Navigation Direction object.
