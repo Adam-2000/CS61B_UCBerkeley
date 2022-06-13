@@ -328,10 +328,24 @@ public class GraphDB {
             tNodeQueue2 = temp;
         }
 
+        while (!tNodeQueue1.isEmpty()) {
+            tNode = tNodeQueue1.removeFirst();
+            if (tNode.exists()) {
+                tNodeQueue2.addLast(tNode);
+            }
+            for (char c : tNode.links.keySet()) {
+                if (Character.isAlphabetic(c) || c == ' ') {
+                    continue;
+                } else {
+                    tNodeQueue1.addFirst(tNode.links.get(c));
+                }
+            }
+        }
+
         LinkedList<Map<String, Object>> result = new LinkedList<>();
 
-        while (!tNodeQueue1.isEmpty()) {
-            TrieMap.Node tnode = tNodeQueue1.removeFirst();
+        while (!tNodeQueue2.isEmpty()) {
+            TrieMap.Node tnode = tNodeQueue2.removeFirst();
             if (tnode.exists()) {
                 for (GraphDB.Node node : tnode.gNodes) {
                     Map<String, Object> map = new TreeMap<>();

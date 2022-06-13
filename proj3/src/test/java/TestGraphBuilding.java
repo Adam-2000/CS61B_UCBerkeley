@@ -2,6 +2,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -133,6 +135,15 @@ public class TestGraphBuilding {
         double lon = -122.25207;
         double lat = 37.8680554;
         assertEquals(2252623344L, graphSmall.closest(lon, lat));
+    }
+
+    @Test
+    public void testFindLocation() {
+        String loc1 = "church of the living god";
+        List<Map<String, Object>> res1 = graph.getLocations(loc1);
+        for (Map<String, Object> map : res1) {
+            System.out.println(map.get("name"));
+        }
     }
 
     static <Item> int countIterableItems(Iterable<Item> it) {
