@@ -252,6 +252,9 @@ public class GraphDB {
         return nodeMap.get(v).latitude;
     }
 
+    private static boolean checkCharIsEnglishLetter(char ch) {
+        return (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
+    }
     public List<String> getLocationsByPrefix(String prefix) {
         List<String> result =  new LinkedList<>();
         TrieMap.Node tNode;
@@ -262,15 +265,15 @@ public class GraphDB {
         actualPrefixes.addLast("");
         for (int i = 0; i < prefix.length(); i++) {
             char currChar = prefix.charAt(i);
-            if (!Character.isAlphabetic(currChar) && currChar != ' ') {
+            if (!checkCharIsEnglishLetter(currChar) && currChar != ' ') {
                 continue;
             }
             while (!tNodeQueue1.isEmpty()) {
                 tNode = tNodeQueue1.removeFirst();
                 String prefixNow = actualPrefixes.removeFirst();
                 for (char c : tNode.links.keySet()) {
-                    if (Character.isAlphabetic(c)) {
-                        if (Character.isAlphabetic(currChar)
+                    if (checkCharIsEnglishLetter(c)) {
+                        if (checkCharIsEnglishLetter(currChar)
                                 && Character.toLowerCase(c) == Character.toLowerCase(currChar)) {
                             tNodeQueue2.addLast(tNode.links.get(c));
                             actualPrefixes.addLast(prefixNow + c);
@@ -303,14 +306,14 @@ public class GraphDB {
         tNodeQueue1.addLast(trie.getRoot());
         for (int i = 0; i < locationName.length(); i++) {
             char currChar = locationName.charAt(i);
-            if (!Character.isAlphabetic(currChar) && currChar != ' ') {
+            if (!checkCharIsEnglishLetter(currChar) && currChar != ' ') {
                 continue;
             }
             while (!tNodeQueue1.isEmpty()) {
                 tNode = tNodeQueue1.removeFirst();
                 for (char c : tNode.links.keySet()) {
-                    if (Character.isAlphabetic(c)) {
-                        if (Character.isAlphabetic(currChar)
+                    if (checkCharIsEnglishLetter(c)) {
+                        if (checkCharIsEnglishLetter(currChar)
                                 && Character.toLowerCase(c) == Character.toLowerCase(currChar)) {
                             tNodeQueue2.addLast(tNode.links.get(c));
                         }
@@ -334,7 +337,7 @@ public class GraphDB {
                 tNodeQueue2.addLast(tNode);
             }
             for (char c : tNode.links.keySet()) {
-                if (Character.isAlphabetic(c) || c == ' ') {
+                if (checkCharIsEnglishLetter(c) || c == ' ') {
                     continue;
                 } else {
                     tNodeQueue1.addFirst(tNode.links.get(c));
