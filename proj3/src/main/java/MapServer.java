@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Base64;
 import java.util.Set;
 
@@ -285,48 +284,7 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        List<String> result =  new LinkedList<>();
-        TrieMap trie = graph.trie;
-        TrieMap.Node tNode;
-        LinkedList<TrieMap.Node> tNodeQueue1 =  new LinkedList<>();
-        LinkedList<TrieMap.Node> tNodeQueue2 =  new LinkedList<>();
-        LinkedList<String> actualPrefixes =  new LinkedList<>();
-        tNodeQueue1.addLast(trie.getRoot());
-        actualPrefixes.addLast("");
-        for (int i = 0; i < prefix.length(); i++) {
-            char currChar = prefix.charAt(i);
-            if (!Character.isAlphabetic(currChar) && currChar != ' ') {
-                continue;
-            }
-            while (!tNodeQueue1.isEmpty()) {
-                tNode = tNodeQueue1.removeFirst();
-                String prefixNow = actualPrefixes.removeFirst();
-                for (char c : tNode.links.keySet()) {
-                    if (Character.isAlphabetic(c)) {
-                        if (Character.isAlphabetic(currChar)
-                                && Character.toLowerCase(c) == Character.toLowerCase(currChar)) {
-                            tNodeQueue2.addLast(tNode.links.get(c));
-                            actualPrefixes.addLast(prefixNow + c);
-                        }
-                    } else if (c == ' ') {
-                        if (currChar == ' ') {
-                            tNodeQueue2.addLast(tNode.links.get(c));
-                            actualPrefixes.addLast(prefixNow + c);
-                        }
-                    } else {
-                        tNodeQueue1.addFirst(tNode.links.get(c));
-                        actualPrefixes.addFirst(prefixNow + c);
-                    }
-                }
-            }
-            LinkedList<TrieMap.Node> temp = tNodeQueue1;
-            tNodeQueue1 = tNodeQueue2;
-            tNodeQueue2 = temp;
-        }
-        while (!tNodeQueue1.isEmpty()) {
-            tNodeQueue1.removeFirst().getList(result, actualPrefixes.removeFirst());
-        }
-        return result;
+        return graph.getLocationsByPrefix(prefix);
     }
 
 
@@ -343,19 +301,7 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        TrieMap.Node tNode = null;
-        LinkedList<Map<String, Object>> result = new LinkedList<>();
-        if (null != (tNode = graph.trie.findStringNode(locationName))) {
-            for (GraphDB.Node node : tNode.gNodes) {
-                Map<String, Object> map = new TreeMap<>();
-                map.put("lat", node.latitude);
-                map.put("lon", node.longitude);
-                map.put("name", node.name);
-                map.put("id", node.id);
-                result.addLast(map);
-            }
-        }
-        return result;
+        return graph.getLocations(locationName);
     }
 
     /**

@@ -1,4 +1,7 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +57,7 @@ public class Router {
         GraphDB.Node curNode = g.getNode(stId);
         long curId = stId;
         curNode.dist = 0;
-        curNode. priority = g.distance(curId, destId);
+        curNode.priority = g.distance(curId, destId);
         heap.insert(curNode);
 
         LinkedList<Long> result = new LinkedList<>();
@@ -120,8 +123,8 @@ public class Router {
         while (-1 != (nextIdx = findNextJunctionNodeIdx(g, route, curIdx, distPtr))) {
             node0 = node1;
             node1 = route.get(nextIdx);
-            long node_ = route.get(curIdx + 1);
-            double dAngle = g.bearing(node0, node_) - g.bearing(route.get(curIdx - 1), node0);
+            double dAngle = g.bearing(node0, route.get(curIdx + 1))
+                          - g.bearing(route.get(curIdx - 1), node0);
             dAngle = clampedAngle(dAngle);
             result.add(new NavigationDirection(NavigationDirection.chooseDirection(dAngle),
                                                getWayName(g, route, curIdx), distPtr[0]));
@@ -131,7 +134,8 @@ public class Router {
         }
         return result;
     }
-    private static int findNextJunctionNodeIdx(GraphDB g, List<Long> route, int curIdx, double[] distPtr) {
+    private static int findNextJunctionNodeIdx(GraphDB g, List<Long> route,
+                                               int curIdx, double[] distPtr) {
         if (curIdx == route.size() - 1) {
             return -1;
         }
